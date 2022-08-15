@@ -9,15 +9,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:lottie/lottie.dart';
+import 'package:neomorph/api/delete.dart';
+import 'package:neomorph/api/edit.dart';
 import 'package:neomorph/api/post.dart';
 import 'package:neomorph/designs/style.dart';
+import 'package:neomorph/loading.dart';
 
 import 'api/config.dart';
 import 'api/get.dart';
 import 'models/Model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:html' as html;
-
 
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 // import 'package:dio/dio.dart';
@@ -43,6 +46,9 @@ class _HomeState extends State<Home> {
   TextEditingController datecontroller = TextEditingController();
   TextEditingController statuscontroller = TextEditingController();
   TextEditingController remarkscontroller = TextEditingController();
+  TextEditingController dateReceivedcontroller = TextEditingController();
+  TextEditingController ctlncontroller = TextEditingController();
+
   bool changeColor = false;
   final currentDay = DateTime.now().day;
   final currentMonth = DateTime.now().month.toString();
@@ -92,10 +98,21 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-        super.initState();
+    super.initState();
     Future.delayed(Duration(seconds: 5));
     futureModels = getRecords();
-
+  }
+  @override
+  void dispose() {
+    partcontroller.dispose();
+    agencycontroller.dispose();
+    remarkscontroller.dispose();
+    dateReceivedcontroller.dispose();
+    datecontroller.dispose();
+    statuscontroller.dispose();
+    ctlncontroller.dispose();
+    
+    super.dispose();
   }
 
   @override
@@ -119,209 +136,343 @@ class _HomeState extends State<Home> {
                     showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          return AlertDialog(
-                            backgroundColor: Color.fromARGB(255, 218, 229, 228),
-                            scrollable: true,
-                            title: Text('Add New',
-                                style: TextStyle(fontWeight: FontWeight.w800)),
-                            content: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(children: <Widget>[
-                                // TextFormField(
-                                //   // controller: emailController,
-                                //   decoration: InputDecoration(hintText: 'Particulars'),
-                                // ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: TextFormField(
-                                    controller: partcontroller,
-                                    decoration: InputDecoration(
-                                        hintText: 'Particulars'),
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return ("This field shouldn't be empty");
-                                      }
-                                    },
+                          return SizedBox(
+                            child: AlertDialog(
+                              contentPadding: EdgeInsets.all(30),
+                              backgroundColor:
+                                  NeumorphicTheme.baseColor(context),
+                              scrollable: true,
+                              title: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Neumorphic(
+                                  style: NeumorphicStyle(
+                                    disableDepth: true,
+                                    shape: NeumorphicShape.convex,
+                                    // color: Colors.grey,
+                                    boxShape: NeumorphicBoxShape.roundRect(
+                                        BorderRadius.circular(8)),
                                   ),
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Text('Add New',
+                                      style: addtitleFont(context)),
                                 ),
-
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: TextFormField(
-                                    controller: agencycontroller,
-                                    decoration: InputDecoration(
-                                        hintText: 'Agency/Office from'),
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return ("This field shouldn't be empty");
-                                      }
-                                    },
+                              ),
+                              content: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Neumorphic(
+                                  style: NeumorphicStyle(
+                                    disableDepth: true,
+                                    color: Colors.grey,
+                                    shape: NeumorphicShape.flat,
+                                    boxShape: NeumorphicBoxShape.roundRect(
+                                        BorderRadius.circular(8)),
                                   ),
-                                ),
-                                // TextFormField(
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: DateTimeField(
-                                      validator: (date) {
-                                        if (date! == null) {
-                                          return ("This field shouldn't be empty");
-                                        }
-                                      },
-                                      decoration: InputDecoration(
-                                        hintText: "Date Made",
-                                      ),
-                                      format: format,
-                                      controller: datecontroller,
-                                      onShowPicker: (context, currentValue) {
-                                        return showDatePicker(
-                                            context: context,
-                                            firstDate: DateTime(1900),
-                                            initialDate:
-                                                currentValue ?? DateTime.now(),
-                                            lastDate: DateTime(2100));
-                                      }),
-                                ),
-
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Center(
-                                    child: IconButton(
-                                        icon: Icon(
-                                          Icons.upload_file,
-                                          size: 30,
-                                        ),
-                                        onPressed: pickFile),
-                                  ),
-                                ),
-                                selectedFile == null
-                                    ? Text('Select a File')
-                                    : Text(selectedFile!.name),
-
-                                //    controller: emailController,
-                                //   decoration: InputDecoration(hintText: 'Date Made'),
-                                // ),
-                              ]),
-                            ),
-                            actions: [
-                              TextButton(
-                                  onPressed: () async {
-                                    // dref.child('Incoming Datas').remove();
-
-                                    // setState(() {
-                                    //   models.add(Models(ctln: null, date: null, part: partcontroller.text, agency: agencycontroller.text, datemade: datecontroller.text));
-                                    // });
-
-                                    // dref.onValue.listen((event) {
-                                    //   Map<String, dynamic> data = event.snapshot.value as Map<String, dynamic>;
-
-                                    //   data.forEach((key, value) {
-                                    //     final abs = Models.ctlnNumber(value);
-
-                                    //     ctlNumber.add(abs);
-
-                                    //     print(ctlNumber);
-
-                                    //    });
-
-                                    //  });
-                                    if (partcontroller.text.isEmpty ||
-                                        agencycontroller.text.isEmpty ||
-                                        datecontroller.text.isEmpty ||
-                                        selectedFile == null) {
-                                      Navigator.of(context).pop();
-                                      const snackBar = SnackBar(
-                                        backgroundColor:
-                                            Color.fromARGB(255, 210, 48, 36),
-                                        content: Text(
-                                          'Please provide ALL the requested Information',
-                                          style: TextStyle(
-                                            color: Color.fromARGB(
-                                                255, 255, 255, 255),
-                                            // letterSpacing: 1,
-                                            fontSize: 13,
-                                            // fontWeight: FontWeight.w800
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(30),
+                                    child: SizedBox(
+                                      width: 600,
+                                      child: Column(children: <Widget>[
+                                        // TextFormField(
+                                        //   // controller: emailController,
+                                        //   decoration: InputDecoration(hintText: 'Particulars'),
+                                        // ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Neumorphic(
+                                            style: NeumorphicStyle(
+                                              shape: NeumorphicShape.flat,
+                                              boxShape:
+                                                  NeumorphicBoxShape.roundRect(
+                                                      BorderRadius.circular(8)),
+                                            ),
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: TextFormField(
+                                              style: bodyFont(context),
+                                              controller: partcontroller,
+                                              decoration: InputDecoration(
+                                                label: Text('Particulars',
+                                                style: bodyFont(context),
+                                                ),
+                            
+                                                  
+                                                  ),
+                                              validator: (value) {
+                                                if (value!.isEmpty) {
+                                                  return "This field shouldn't be empty";
+                                                }
+                                              },
+                                            ),
                                           ),
                                         ),
-                                        duration: Duration(seconds: 3),
-                                      );
 
-                                      // Find the ScaffoldMessenger in the widget tree
-                                      // and use it to show a SnackBar.
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(snackBar);
-                                    }
-                                    // else if (parts
-                                    //     .contains(partcontroller.text)) {
-                                    //   Navigator.of(context).pop();
-                                    //   const snackBar = SnackBar(
-                                    //     backgroundColor:
-                                    //         Color.fromARGB(255, 210, 48, 36),
-                                    //     content: Text(
-                                    //       "Particular field shouldn't be repeated",
-                                    //       style: TextStyle(
-                                    //         color: Color.fromARGB(
-                                    //             255, 255, 255, 255),
-                                    //         // letterSpacing: 1,
-                                    //         fontSize: 13,
-                                    //         // fontWeight: FontWeight.w800
-                                    //       ),
-                                    //     ),
-                                    //     duration: Duration(seconds: 3),
-                                    //   );
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Neumorphic(
+                                            style: NeumorphicStyle(
+                                              shape: NeumorphicShape.flat,
+                                              boxShape:
+                                                  NeumorphicBoxShape.roundRect(
+                                                      BorderRadius.circular(8)),
+                                            ),
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: TextFormField(
+                                              style: bodyFont(context),
+                                              controller: ctlncontroller,
+                                              decoration: InputDecoration(
+                                                  label: Text('Control number',
+                                                style: bodyFont(context),
+                                                ),
+                                                  ),
+                                              validator: (value) {
+                                                if (value!.isEmpty) {
+                                                  return ("This field shouldn't be empty");
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        ),
 
-                                    //   // Find the ScaffoldMessenger in the widget tree
-                                    //   // and use it to show a SnackBar.
-                                    //   ScaffoldMessenger.of(context)
-                                    //       .showSnackBar(snackBar);
-                                    // }
-                                    else {
-                                      final ctln = DateFormat('ddMM-hhmm-sss')
-                                          .format(DateTime.now());
-                                      final link =
-                                          "/incoming_data/incoming_files/${selectedFile!.name.replaceAll('.${selectedFile!.extension}', '')}/${selectedFile!.name}";
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Neumorphic(
+                                            style: NeumorphicStyle(
+                                              shape: NeumorphicShape.flat,
+                                              boxShape:
+                                                  NeumorphicBoxShape.roundRect(
+                                                      BorderRadius.circular(8)),
+                                            ),
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: DateTimeField(
+                                              style: bodyFont(context),
+                                                validator: (date) {
+                                                  if (date! == null) {
+                                                    return ("This field shouldn't be empty");
+                                                  }
+                                                },
+                                                decoration: InputDecoration(
+                                                  label: Text('Date Received',
+                                                style: bodyFont(context),
+                                                ),
+                                                        ),
+                                                format: format,
+                                                controller:
+                                                    dateReceivedcontroller,
+                                                onShowPicker:
+                                                    (context, currentValue) {
+                                                  return showDatePicker(
+                                                      context: context,
+                                                      firstDate: DateTime(1900),
+                                                      initialDate:
+                                                          currentValue ??
+                                                              DateTime.now(),
+                                                      lastDate: DateTime(2100));
+                                                }),
+                                          ),
+                                        ),
 
-                                      createRecord(
-                                          partcontroller.text,
-                                          agencycontroller.text,
-                                          datecontroller.text,
-                                          "new",
-                                          "",
-                                          DateFormat('ddMM-hhmm-sss')
-                                              .format(DateTime.now()),
-                                          dateNowFormat,
-                                          link);
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Neumorphic(
+                                            style: NeumorphicStyle(
+                                              shape: NeumorphicShape.flat,
+                                              boxShape:
+                                                  NeumorphicBoxShape.roundRect(
+                                                      BorderRadius.circular(8)),
+                                            ),
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: TextFormField(
+                                              style: bodyFont(context),
+                                              controller: agencycontroller,
+                                              decoration: InputDecoration(
+                                                label: Text('Agency',
+                                                style: bodyFont(context),
+                                                ),
+                                                  ),
+                                              validator: (value) {
+                                                if (value!.isEmpty) {
+                                                  return ("This field shouldn't be empty");
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                        // TextFormField(
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Neumorphic(
+                                            style: NeumorphicStyle(
+                                              shape: NeumorphicShape.flat,
+                                              boxShape:
+                                                  NeumorphicBoxShape.roundRect(
+                                                      BorderRadius.circular(8)),
+                                            ),
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: DateTimeField(
+                                              style: bodyFont(context),
+                                                validator: (date) {
+                                                  if (date! == null) {
+                                                    return ("This field shouldn't be empty");
+                                                  }
+                                                },
+                                                decoration: InputDecoration(
+                                                    label: Text('Date Made',
+                                                style: bodyFont(context),
+                                                ),
+                                                        ),
+                                                format: format,
+                                                controller: datecontroller,
+                                                onShowPicker:
+                                                    (context, currentValue) {
+                                                  return showDatePicker(
+                                                      context: context,
+                                                      firstDate: DateTime(1900),
+                                                      initialDate:
+                                                          currentValue ??
+                                                              DateTime.now(),
+                                                      lastDate: DateTime(2100));
+                                                }),
+                                          ),
+                                        ),
 
-                                      uploadFile();
+                                        Padding(
+                                          padding: const EdgeInsets.all(12.0),
+                                          child: Center(
+                                            child: Neumorphic(
+                                              style: NeumorphicStyle(
+                                                shape: NeumorphicShape.flat,
+                                                boxShape: NeumorphicBoxShape
+                                                    .roundRect(
+                                                        BorderRadius.circular(
+                                                            8)),
+                                              ),
+                                              padding:
+                                                  const EdgeInsets.all(12.0),
+                                              child: IconButton(
+                                                
+                                                  icon: Icon(
 
-                                      // Navigator.pop(context);
+                                                    color: textColor(context),
+                                                    Icons.upload_file,
 
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  Home()));
-                                    }
+                                                    size: 30,
+                                                  ),
+                                                  onPressed: pickFile),
+                                            ),
+                                          ),
+                                        ),
+                                        selectedFile == null
+                                            ? Text(
+                                                'Select a File',
+                                                style: bodyFont(context),
+                                              )
+                                            : Text(selectedFile!.name),
 
-                                    // await  eref.child('Incoming Datas').push().set({
-                                    //     "Particulars": partcontroller.text,
-                                    //     "Agency": agencycontroller.text,
-                                    //     "DateMade": datecontroller.text
-                                    //   });
-
-                                    // html.window.location.reload();
-                                    //  setState(() {
-                                    //    (context as Element).performRebuild();
-                                    //  });
-                                  },
-                                  child: Center(
-                                    child: Text(
-                                      "Submit",
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w800),
+                                        //    controller: emailController,
+                                        //   decoration: InputDecoration(hintText: 'Date Made'),
+                                        // ),
+                                      ]),
                                     ),
-                                  ))
-                            ],
+                                  ),
+                                ),
+                              ),
+                              actions: [
+                                NeumorphicButton(
+                                    style: NeumorphicStyle(
+                                      shape: NeumorphicShape.flat,
+                                      boxShape: NeumorphicBoxShape.roundRect(
+                                          BorderRadius.circular(8)),
+                                    ),
+                                    padding: const EdgeInsets.all(12.0),
+                                    onPressed: () async {
+                                      if (partcontroller.text.isEmpty ||
+                                          agencycontroller.text.isEmpty ||
+                                          datecontroller.text.isEmpty ||
+                                          selectedFile == null) {
+                                        Navigator.of(context).pop();
+                                        final snackBar = SnackBar(
+                                          backgroundColor:
+                                              Color.fromARGB(255, 211, 111, 104),
+                                          content: Text(
+                                            'Please provide all the requested information',
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                          duration: Duration(seconds: 3),
+                                        );
+
+                                        // Find the ScaffoldMessenger in the widget tree
+                                        // and use it to show a SnackBar.
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(snackBar);
+                                      }
+                                      // else if (parts
+                                      //     .contains(partcontroller.text)) {
+                                      //   Navigator.of(context).pop();
+                                      //   const snackBar = SnackBar(
+                                      //     backgroundColor:
+                                      //         Color.fromARGB(255, 210, 48, 36),
+                                      //     content: Text(
+                                      //       "Particular field shouldn't be repeated",
+                                      //       style: TextStyle(
+                                      //         color: Color.fromARGB(
+                                      //             255, 255, 255, 255),
+                                      //         // letterSpacing: 1,
+                                      //         fontSize: 13,
+                                      //         // fontWeight: FontWeight.w800
+                                      //       ),
+                                      //     ),
+                                      //     duration: Duration(seconds: 3),
+                                      //   );
+
+                                      //   // Find the ScaffoldMessenger in the widget tree
+                                      //   // and use it to show a SnackBar.
+                                      //   ScaffoldMessenger.of(context)
+                                      //       .showSnackBar(snackBar);
+                                      // }
+                                      else {
+                                        final ctln = DateFormat('ddMM-hhmm-sss')
+                                            .format(DateTime.now());
+                                        final link =
+                                            "/incoming_data/incoming_files/${selectedFile!.name.replaceAll('.${selectedFile!.extension}', '')}/${selectedFile!.name}";
+
+                                        createRecord(
+                                            partcontroller.text,
+                                            agencycontroller.text,
+                                            datecontroller.text,
+                                            "new",
+                                            "",
+                                            ctlncontroller.text,
+                                            dateReceivedcontroller.text,
+                                            link);
+
+                                        uploadFile();
+
+                                        // Navigator.pop(context);
+
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        Home()));
+                                      }
+
+                                      // await  eref.child('Incoming Datas').push().set({
+                                      //     "Particulars": partcontroller.text,
+                                      //     "Agency": agencycontroller.text,
+                                      //     "DateMade": datecontroller.text
+                                      //   });
+
+                                      // html.window.location.reload();
+                                      //  setState(() {
+                                      //    (context as Element).performRebuild();
+                                      //  });
+                                    },
+                                    child: Center(
+                                      child: Text("Submit",
+                                          style: addtitleFont(context)),
+                                    ))
+                              ],
+                            ),
                           );
                         });
                   },
@@ -436,7 +587,7 @@ class _HomeState extends State<Home> {
                         NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
                   ),
                   padding: const EdgeInsets.all(12.0),
-                  child: Text("Incoming Communications ${currentYear}",
+                  child: Text("Incoming Communications",
                       style: titleFont(context)),
                 ),
               ),
@@ -573,7 +724,8 @@ class _HomeState extends State<Home> {
                                                       .data![index].fileLink
                                                       .toString();
 
-                                                  html.window.open('https://${ip}${url}',
+                                                  html.window.open(
+                                                      'https://${ip}${url}',
                                                       '${snapshot.data![index].particulars}');
 
                                                   /////////////////////////////////////
@@ -697,7 +849,7 @@ class _HomeState extends State<Home> {
                                                                           (value) {
                                                                         if (value!
                                                                             .isEmpty) {
-                                                                          return ("This field shouldn't be empty");
+                                                                          return "This field shouldn't be empty";
                                                                         }
                                                                       },
                                                                     ),
@@ -711,7 +863,7 @@ class _HomeState extends State<Home> {
                                                                           (value) {
                                                                         if (value!
                                                                             .isEmpty) {
-                                                                          return ("This field shouldn't be empty");
+                                                                          return "This field shouldn't be empty";
                                                                         }
                                                                       },
                                                                     ),
@@ -722,6 +874,13 @@ class _HomeState extends State<Home> {
                                                                 TextButton(
                                                                     onPressed:
                                                                         () {
+
+                                                                          editRecord(
+                                                                            "${snapshot.data![index].id}",
+                                                                           statuscontroller.text,
+                                                                            remarkscontroller.text
+                                                                            );
+
                                                                       // dref
                                                                       //     .child(
                                                                       //         '${keys[index]}')
@@ -768,6 +927,9 @@ class _HomeState extends State<Home> {
                                           child: Center(
                                             child: IconButton(
                                                 onPressed: () async {
+
+
+                                                  deleteRecord( "${snapshot.data![index].id}");
                                                   // dref.child('${keys[index]}').remove();
                                                   // sref
                                                   //     .child(
@@ -776,10 +938,13 @@ class _HomeState extends State<Home> {
 
                                                   const snackBar = SnackBar(
                                                     backgroundColor:
-                                                        Color.fromARGB(
-                                                            255, 210, 111, 36),
+                                                        Color.fromARGB(255, 211, 111, 104),
                                                     content: Text(
-                                                        'Successfully Deleted'),
+                                                        'Successfully Deleted',
+                                                        style: TextStyle(
+                                                          color: Colors.white
+                                                        ),
+                                                        ),
                                                     duration:
                                                         Duration(seconds: 3),
                                                   );
@@ -800,7 +965,7 @@ class _HomeState extends State<Home> {
                                                 icon: const Icon(
                                                   Icons.delete_outline,
                                                   color: Colors.redAccent,
-                                                  size: 30,
+                                                  size: 26,
                                                 )),
                                           ),
                                         ),
@@ -812,13 +977,7 @@ class _HomeState extends State<Home> {
                     }));
               }
 
-              return const Center(
-                child: SizedBox(
-                  height: 100,
-                  width: 100,
-                  child: CircularProgressIndicator(),
-                ),
-              );
+              return Loading();
             })),
       ),
     );

@@ -22,14 +22,14 @@ class MyApp extends StatelessWidget {
       theme: NeumorphicThemeData(
         
         textTheme: TextTheme(
-          bodyLarge:  GoogleFonts.openSans(),
+          // bodyLarge:  GoogleFonts.openSans(),
         ),
-        baseColor: Color(0xFF8fcaca),
+        baseColor: Color.fromARGB(255, 255, 255, 255),
         lightSource: LightSource.topLeft,
         depth: 10,
       ),
       darkTheme: NeumorphicThemeData(
-        baseColor: Color(0xFF3E3E3E),
+        baseColor: Color(0xFF121212),
         lightSource: LightSource.topLeft,
         depth: 10,
       ),
@@ -67,7 +67,7 @@ class MyHomePage extends StatelessWidget {
                 ),
                 padding: const EdgeInsets.all(12.0),
                 child: Text(
-                  "Incoming Communications ${currentYear}",
+                  "Incoming Communications",
                   style: titleFont(context)
                 ),
               ),

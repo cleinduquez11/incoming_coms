@@ -50,6 +50,18 @@ Color? iconsColor(BuildContext context) {
     
   }
 
+    TextStyle addtitleFont(BuildContext context) {
+   
+      return GoogleFonts.cinzel(
+        color: textColor(context),
+        fontSize: 26,
+        fontWeight: FontWeight.w500
+      );
+    
+    
+  }
+
+
     TextStyle subtitleFont(BuildContext context) {
    
       return GoogleFonts.cinzel(
