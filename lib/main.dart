@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:neomorph/designs/style.dart';
 import 'package:neomorph/home.dart';
 
+
+  final currentYear = DateTime.now().year;
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -65,7 +67,7 @@ class MyHomePage extends StatelessWidget {
                 ),
                 padding: const EdgeInsets.all(12.0),
                 child: Text(
-                  "Incoming Communications",
+                  "Incoming Communications ${currentYear}",
                   style: titleFont(context)
                 ),
               ),

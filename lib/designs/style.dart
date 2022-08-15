@@ -16,11 +16,29 @@ Color? iconsColor(BuildContext context) {
       return GoogleFonts.nunito(
         color: textColor(context),
          fontSize: 16,
-        // fontStyle: FontStyle.italic
+        //  fontStyle: FontStyle.italic
       );
+
+      
     
     
   }
+
+    TextStyle particularsFont(BuildContext context) {
+   
+      return GoogleFonts.nunito(
+        color: textColor(context),
+         fontSize: 16,
+         fontStyle: FontStyle.italic,
+         fontWeight: FontWeight.w400
+      );
+
+      
+    
+    
+  }
+
+
     TextStyle titleFont(BuildContext context) {
    
       return GoogleFonts.cinzel(

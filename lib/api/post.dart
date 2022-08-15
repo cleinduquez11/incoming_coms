@@ -2,10 +2,15 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'config.dart';
+
+final ip = Config.Server;
+
+
 Future <void> createRecord(String? particular, String? agency, String? datemade, String? status, String? remarks, String? controlNumber, String? date, String? fileLink) async{
 
 try {
-  String uri = "http://192.168.1.12/incoming_data/insert_record.php";
+  String uri = "http://${ip}/incoming_data/insert_record.php";
   var res = await http.post(Uri.parse(uri), 
 
   body: {
