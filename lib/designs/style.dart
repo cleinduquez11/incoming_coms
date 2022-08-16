@@ -19,11 +19,20 @@ Color? iconsColor(BuildContext context) {
         //  fontStyle: FontStyle.italic
       );
 
-      
-    
-    
   }
 
+
+  
+
+    TextStyle rodyFont(BuildContext context) {
+   
+      return GoogleFonts.nunito(
+        color: rextColor(context),
+         fontSize: 16,
+        //  fontStyle: FontStyle.italic
+      );
+
+    }
     TextStyle particularsFont(BuildContext context) {
    
       return GoogleFonts.nunito(
@@ -78,5 +87,15 @@ Color? iconsColor(BuildContext context) {
       return Color.fromARGB(255, 253, 253, 253);
     } else {
       return Color.fromARGB(255, 0, 0, 0);
+    }
+  }
+
+  
+  Color rextColor(BuildContext context) {
+    if (NeumorphicTheme.isUsingDark(context)) {
+      return Color.fromARGB(255, 0, 0, 0);
+    } else {
+      return 
+              Color.fromARGB(255, 253, 253, 253);
     }
   }

@@ -13,6 +13,8 @@ try {
   String uri = "http://${ip}/incoming_data/delete_record.php";
   var res = await http.post(Uri.parse(uri), 
 
+  
+  
   body: {
         "id":id
 

@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:neomorph/api/delete.dart';
 import 'package:neomorph/api/edit.dart';
@@ -39,7 +40,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late Future<List<Model>> futureModels;
+  late Future<List<Model>> futureModels = getRecords();
+   
 
   TextEditingController partcontroller = TextEditingController();
   TextEditingController agencycontroller = TextEditingController();
@@ -48,6 +50,7 @@ class _HomeState extends State<Home> {
   TextEditingController remarkscontroller = TextEditingController();
   TextEditingController dateReceivedcontroller = TextEditingController();
   TextEditingController ctlncontroller = TextEditingController();
+  ScrollController latestController = ScrollController();
 
   bool changeColor = false;
   final currentDay = DateTime.now().day;
@@ -99,9 +102,9 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 5));
-    futureModels = getRecords();
+   
   }
+
   @override
   void dispose() {
     partcontroller.dispose();
@@ -111,7 +114,7 @@ class _HomeState extends State<Home> {
     datecontroller.dispose();
     statuscontroller.dispose();
     ctlncontroller.dispose();
-    
+
     super.dispose();
   }
 
@@ -128,7 +131,10 @@ class _HomeState extends State<Home> {
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(150),
           child: AppBar(
-            backwardsCompatibility: false,
+            leading: Icon(Icons.newspaper,
+            color: textColor(context),
+            size: 26,
+            ),
             actions: [
               NeumorphicButton(
                   margin: EdgeInsets.all(12),
@@ -147,7 +153,7 @@ class _HomeState extends State<Home> {
                                 child: Neumorphic(
                                   style: NeumorphicStyle(
                                     disableDepth: true,
-                                    shape: NeumorphicShape.convex,
+                                    // shape: NeumorphicShape.convex,
                                     // color: Colors.grey,
                                     boxShape: NeumorphicBoxShape.roundRect(
                                         BorderRadius.circular(8)),
@@ -191,12 +197,11 @@ class _HomeState extends State<Home> {
                                               style: bodyFont(context),
                                               controller: partcontroller,
                                               decoration: InputDecoration(
-                                                label: Text('Particulars',
-                                                style: bodyFont(context),
+                                                label: Text(
+                                                  'Particulars',
+                                                  style: bodyFont(context),
                                                 ),
-                            
-                                                  
-                                                  ),
+                                              ),
                                               validator: (value) {
                                                 if (value!.isEmpty) {
                                                   return "This field shouldn't be empty";
@@ -220,10 +225,11 @@ class _HomeState extends State<Home> {
                                               style: bodyFont(context),
                                               controller: ctlncontroller,
                                               decoration: InputDecoration(
-                                                  label: Text('Control number',
-                                                style: bodyFont(context),
+                                                label: Text(
+                                                  'Control number',
+                                                  style: bodyFont(context),
                                                 ),
-                                                  ),
+                                              ),
                                               validator: (value) {
                                                 if (value!.isEmpty) {
                                                   return ("This field shouldn't be empty");
@@ -244,17 +250,18 @@ class _HomeState extends State<Home> {
                                             ),
                                             padding: const EdgeInsets.all(12.0),
                                             child: DateTimeField(
-                                              style: bodyFont(context),
+                                                style: bodyFont(context),
                                                 validator: (date) {
                                                   if (date! == null) {
                                                     return ("This field shouldn't be empty");
                                                   }
                                                 },
                                                 decoration: InputDecoration(
-                                                  label: Text('Date Received',
-                                                style: bodyFont(context),
+                                                  label: Text(
+                                                    'Date Received',
+                                                    style: bodyFont(context),
+                                                  ),
                                                 ),
-                                                        ),
                                                 format: format,
                                                 controller:
                                                     dateReceivedcontroller,
@@ -285,10 +292,11 @@ class _HomeState extends State<Home> {
                                               style: bodyFont(context),
                                               controller: agencycontroller,
                                               decoration: InputDecoration(
-                                                label: Text('Agency',
-                                                style: bodyFont(context),
+                                                label: Text(
+                                                  'Agency',
+                                                  style: bodyFont(context),
                                                 ),
-                                                  ),
+                                              ),
                                               validator: (value) {
                                                 if (value!.isEmpty) {
                                                   return ("This field shouldn't be empty");
@@ -309,17 +317,18 @@ class _HomeState extends State<Home> {
                                             ),
                                             padding: const EdgeInsets.all(12.0),
                                             child: DateTimeField(
-                                              style: bodyFont(context),
+                                                style: bodyFont(context),
                                                 validator: (date) {
                                                   if (date! == null) {
                                                     return ("This field shouldn't be empty");
                                                   }
                                                 },
                                                 decoration: InputDecoration(
-                                                    label: Text('Date Made',
-                                                style: bodyFont(context),
+                                                  label: Text(
+                                                    'Date Made',
+                                                    style: bodyFont(context),
+                                                  ),
                                                 ),
-                                                        ),
                                                 format: format,
                                                 controller: datecontroller,
                                                 onShowPicker:
@@ -349,12 +358,9 @@ class _HomeState extends State<Home> {
                                               padding:
                                                   const EdgeInsets.all(12.0),
                                               child: IconButton(
-                                                
                                                   icon: Icon(
-
                                                     color: textColor(context),
                                                     Icons.upload_file,
-
                                                     size: 30,
                                                   ),
                                                   onPressed: pickFile),
@@ -391,11 +397,10 @@ class _HomeState extends State<Home> {
                                           selectedFile == null) {
                                         Navigator.of(context).pop();
                                         final snackBar = SnackBar(
-                                          backgroundColor:
-                                              Color.fromARGB(255, 211, 111, 104),
+                                          backgroundColor: textColor(context),
                                           content: Text(
                                             'Please provide all the requested information',
-                                            style: TextStyle(color: Colors.white),
+                                            style: rodyFont(context),
                                           ),
                                           duration: Duration(seconds: 3),
                                         );
@@ -454,6 +459,14 @@ class _HomeState extends State<Home> {
                                                 builder:
                                                     (BuildContext context) =>
                                                         Home()));
+
+                                        //  html.window.location.reload();
+                                        latestController.animateTo(
+                                          latestController
+                                              .position.maxScrollExtent,
+                                          duration: Duration(milliseconds: 500),
+                                          curve: Curves.linear,
+                                        );
                                       }
 
                                       // await  eref.child('Incoming Datas').push().set({
@@ -597,10 +610,12 @@ class _HomeState extends State<Home> {
         backgroundColor: NeumorphicTheme.baseColor(context),
         extendBodyBehindAppBar: true,
         body: FutureBuilder<List<Model>>(
+
             future: futureModels,
             builder: ((context, snapshot) {
               if (snapshot.hasData) {
                 return ListView.builder(
+                    controller: latestController,
                     // reverse: true,
                     itemCount: snapshot.data!.length,
                     itemBuilder: ((context, index) {
@@ -707,11 +722,11 @@ class _HomeState extends State<Home> {
                                               MainAxisAlignment.center,
                                           children: [
                                             TextButton(
-                                                style: TextButton.styleFrom(
-                                                    // primary: changeColor ? Colors.blue : Colors.pink,
-                                                    //primary: Colors.blue,
-                                                    // onSurface: Colors.green,
-                                                    ),
+                                                // style: TextButton.styleFrom(
+                                                //     // primary: changeColor ? Colors.blue : Colors.pink,
+                                                //     //primary: Colors.blue,
+                                                //     // onSurface: Colors.green,
+                                                //     ),
                                                 onPressed: () async {
                                                   // final ref = sref.child(
                                                   //     'files/${snapshot.data![index].part}.${snapshot.data![index].ext}');
@@ -778,7 +793,7 @@ class _HomeState extends State<Home> {
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
-                                                0.1,
+                                                0.12,
                                             child: Row(
                                               children: [
                                                 TextButton(
@@ -788,28 +803,70 @@ class _HomeState extends State<Home> {
                                                         builder: ((BuildContext
                                                             context) {
                                                           return AlertDialog(
-                                                            title: Row(
+                                                            
+                                                            title: Column(
+                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
                                                               children: [
-                                                                const Text(
-                                                                    'Status: '),
-                                                                Text(
-                                                                  '${snapshot.data![index].status}',
-                                                                  style: TextStyle(
-                                                                      color: snapshot.data![index].status == 'terminated'
-                                                                          ? const Color.fromARGB(255, 240, 28, 28)
-                                                                          : snapshot.data![index].status == 'accomplished'
-                                                                              ? const Color.fromARGB(255, 35, 240, 28)
-                                                                              : snapshot.data![index].status == 'new'
-                                                                                  ? const Color.fromARGB(255, 10, 151, 153)
-                                                                                  : const Color.fromARGB(255, 240, 226, 28)),
+                                                                
+                                                                Text('${snapshot.data![index].particulars}',
+                                                                style: GoogleFonts.cinzel(
+                                                                  color: Colors.black,
+                                                                  fontSize: 24,
+                                                                  fontWeight: FontWeight.w700
+                                                                ) ,
+                                                                ),
+                                                                SizedBox(height: 30,),
+                                                                Row(
+                                                                  children: [
+                                                                     Text(
+                                                                        'status: ',
+                                                                        style: GoogleFonts.nunito(
+                                                                          color: Colors.black,
+                                                                          fontSize: 16,
+                                                                          fontWeight: FontWeight.w600
+
+                                                                        ),
+                                                                        ),
+                                                                    Text(
+                                                                      '${snapshot.data![index].status}',
+                                                                      style: GoogleFonts.nunito(
+                                                                        fontSize: 16,
+                                                                          color: snapshot.data![index].status == 'terminated'
+                                                                              ? const Color.fromARGB(255, 240, 28, 28)
+                                                                              : snapshot.data![index].status == 'accomplished'
+                                                                                  ? const Color.fromARGB(255, 35, 240, 28)
+                                                                                  : snapshot.data![index].status == 'new'
+                                                                                      ? const Color.fromARGB(255, 10, 151, 153)
+                                                                                      : Color.fromARGB(255, 215, 164, 12),
+                                                                      )
+                                                                    ),
+                                                                  ],
                                                                 ),
                                                               ],
                                                             ),
                                                             content: SizedBox(
-                                                              width: 200,
-                                                              height: 200,
-                                                              child: Text(
-                                                                  '${snapshot.data![index].remarks}'),
+                                                              // width: 200,
+                                                              // height: 200,
+                                                              child: Row(
+                                                                children: [
+                                                                  Text("remarks: ",
+                                                                  style: GoogleFonts.nunito(
+                                                                    color: Colors.black,
+                                                                    fontSize: 16,
+                                                                    fontWeight: FontWeight.w600
+                                                                  )
+                                                                  ),
+                                                                  Text(
+                                                                      '${snapshot.data![index].remarks}',
+                                                                      style: GoogleFonts.nunito(
+                                                                    color: Colors.black,
+                                                                    fontSize: 16,
+                                                                    fontStyle: FontStyle.italic
+                                                                  )
+                                                                      ),
+                                                                ],
+                                                              ),
                                                             ),
                                                           );
                                                         }));
@@ -822,9 +879,20 @@ class _HomeState extends State<Home> {
                                                   },
                                                   child: Text(
                                                       "${snapshot.data![index].status}",
-                                                      style: bodyFont(context)),
+                                                      style: GoogleFonts.nunito(
+                                                                        fontSize: 16,
+                                                                          color: snapshot.data![index].status == 'terminated'
+                                                                              ? const Color.fromARGB(255, 240, 28, 28)
+                                                                              : snapshot.data![index].status == 'accomplished'
+                                                                                  ? const Color.fromARGB(255, 35, 240, 28)
+                                                                                  : snapshot.data![index].status == 'new'
+                                                                                      ? const Color.fromARGB(255, 10, 151, 153)
+                                                                                      : Color.fromARGB(255, 215, 164, 12),
+                                                                      )
+                                                      ),
                                                 ),
                                                 IconButton(
+                                                    color: textColor(context),
                                                     onPressed: () {
                                                       showDialog(
                                                           context: context,
@@ -832,10 +900,28 @@ class _HomeState extends State<Home> {
                                                               ((BuildContext
                                                                   context) {
                                                             return AlertDialog(
-                                                              title: const Text(
-                                                                  'Edit Status'),
-                                                              content: SizedBox(
-                                                                height: 150,
+                                                              title: Column(
+                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                
+                                                                Text('${snapshot.data![index].particulars}',
+                                                                style: GoogleFonts.cinzel(
+                                                                  color: Colors.black,
+                                                                  fontSize: 24,
+                                                                  fontWeight: FontWeight.w700
+                                                                ) ,
+                                                                ),
+                                                                SizedBox(height: 30,),
+                                                                
+                                                              ],
+                                                            ),
+                                                       
+                                                              content: Container(
+                                                                decoration: BoxDecoration(
+                                                                  border: Border.all()
+                                                                ),
+                                                                height: 250,
                                                                 width: 100,
                                                                 child: Column(
                                                                   children: [
@@ -843,8 +929,16 @@ class _HomeState extends State<Home> {
                                                                       controller:
                                                                           statuscontroller,
                                                                       decoration:
-                                                                          const InputDecoration(
-                                                                              hintText: 'Status'),
+                                                                          InputDecoration(
+                                                                        label:
+                                                                            Text(
+                                                                          'Status',
+                                                                        ),
+                                                                        labelStyle: TextStyle(
+                                                                            color:
+                                                                                Colors.black,
+                                                                            fontSize: 16),
+                                                                      ),
                                                                       validator:
                                                                           (value) {
                                                                         if (value!
@@ -854,11 +948,26 @@ class _HomeState extends State<Home> {
                                                                       },
                                                                     ),
                                                                     TextFormField(
+                                                                      showCursor: false,
+                                                                      cursorColor: Colors.white,
                                                                       controller:
                                                                           remarkscontroller,
+                                                                      keyboardType:
+                                                                          TextInputType
+                                                                              .multiline,
+                                                                      maxLines:
+                                                                          null,
                                                                       decoration:
-                                                                          const InputDecoration(
-                                                                              hintText: 'Remarks'),
+                                                                          InputDecoration(
+                                                                        label:
+                                                                            Text(
+                                                                          'Remarks',
+                                                                        ),
+                                                                        labelStyle: TextStyle(
+                                                                            color:
+                                                                                Colors.black,
+                                                                            fontSize: 16),
+                                                                      ),
                                                                       validator:
                                                                           (value) {
                                                                         if (value!
@@ -871,15 +980,46 @@ class _HomeState extends State<Home> {
                                                                 ),
                                                               ),
                                                               actions: [
-                                                                TextButton(
+                                                                NeumorphicButton(
                                                                     onPressed:
                                                                         () {
+                                                                      if (statuscontroller
+                                                                              .text
+                                                                              .isEmpty &&
+                                                                          remarkscontroller
+                                                                              .text
+                                                                              .isEmpty) {
+                                                                        Navigator.of(context)
+                                                                            .pop();
+                                                                        // final snackBar =
+                                                                        //     SnackBar(
+                                                                        //   backgroundColor:
+                                                                        //       textColor(context),
+                                                                        //   content:
+                                                                        //       Text(
+                                                                        //     'Please provide all the requested information',
+                                                                        //     style:
+                                                                        //         rodyFont(context),
+                                                                        //   ),
+                                                                        //   duration:
+                                                                        //       Duration(seconds: 3),
+                                                                        // );
 
-                                                                          editRecord(
+                                                                        // // Find the ScaffoldMessenger in the widget tree
+                                                                        // // and use it to show a SnackBar.
+                                                                        // ScaffoldMessenger.of(context)
+                                                                        //     .showSnackBar(snackBar);
+                                                                      } else {
+                                                                        editRecord(
                                                                             "${snapshot.data![index].id}",
-                                                                           statuscontroller.text,
-                                                                            remarkscontroller.text
-                                                                            );
+                                                                            statuscontroller.text,
+                                                                            remarkscontroller.text);
+
+                                                                             Navigator.of(
+                                                                              context)
+                                                                          .pushReplacement(
+                                                                              MaterialPageRoute(builder: (BuildContext context) => Home()));
+                                                                      }
 
                                                                       // dref
                                                                       //     .child(
@@ -892,16 +1032,14 @@ class _HomeState extends State<Home> {
                                                                       //       remarkscontroller
                                                                       //           .text
                                                                       // });
-                                                                      // Navigator.of(
-                                                                      //         context)
-                                                                      //     .pushReplacement(
-                                                                      //         MaterialPageRoute(
-                                                                      //             builder:
-                                                                      //                 (BuildContext context) =>
-                                                                      //                     Try()));
+                                                                     
                                                                     },
-                                                                    child: const Text(
-                                                                        "Save"))
+                                                                    child: Text(
+                                                                      "Save",
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              textColor(context)),
+                                                                    ))
                                                               ],
                                                             );
                                                           }));
@@ -927,24 +1065,23 @@ class _HomeState extends State<Home> {
                                           child: Center(
                                             child: IconButton(
                                                 onPressed: () async {
-
-
-                                                  deleteRecord( "${snapshot.data![index].id}");
+                                                  deleteRecord(
+                                                      "${snapshot.data![index].id}");
                                                   // dref.child('${keys[index]}').remove();
                                                   // sref
                                                   //     .child(
                                                   //         'files/${snapshot.data![index].part}.${snapshot.data![index].ext}')
                                                   //     .delete();
 
-                                                  const snackBar = SnackBar(
+                                                  final snackBar = SnackBar(
                                                     backgroundColor:
-                                                        Color.fromARGB(255, 211, 111, 104),
+                                                        textColor(context),
                                                     content: Text(
-                                                        'Successfully Deleted',
-                                                        style: TextStyle(
-                                                          color: Colors.white
-                                                        ),
-                                                        ),
+                                                      'Successfully Deleted',
+                                                      style: TextStyle(
+                                                          color: rextColor(
+                                                              context)),
+                                                    ),
                                                     duration:
                                                         Duration(seconds: 3),
                                                   );
@@ -954,7 +1091,7 @@ class _HomeState extends State<Home> {
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(snackBar);
 
-                                                  const CircularProgressIndicator();
+                                                  // const CircularProgressIndicator();
                                                   Navigator.of(context).push(
                                                       MaterialPageRoute(
                                                           maintainState: false,

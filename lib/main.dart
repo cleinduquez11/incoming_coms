@@ -1,13 +1,15 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:neomorph/designs/style.dart';
 import 'package:neomorph/home.dart';
 
 
   final currentYear = DateTime.now().year;
-void main() => runApp(MyApp());
+void main() async {
+  //  dotenv.load(fileName: "server.env");
+runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -16,7 +18,7 @@ class MyApp extends StatelessWidget {
     return NeumorphicApp(
       
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Incoming Communications',
       themeMode: ThemeMode.light,
       // ignore: prefer_const_constructors
       theme: NeumorphicThemeData(
@@ -24,7 +26,7 @@ class MyApp extends StatelessWidget {
         textTheme: TextTheme(
           // bodyLarge:  GoogleFonts.openSans(),
         ),
-        baseColor: Color.fromARGB(255, 255, 255, 255),
+        baseColor: Color(0xFFd4f1f9),
         lightSource: LightSource.topLeft,
         depth: 10,
       ),
