@@ -17,6 +17,10 @@ class Model {
         @required this.date,
         @required this.datemade,
         @required this.fileLink,
+        @required this.search,
+        @required this.from,
+        @required this.until,
+
     });
 
     String? id;
@@ -28,6 +32,9 @@ class Model {
     String? date;
     String? datemade;
     String? fileLink;
+    String? search;
+    String? from;
+    String? until;
 
     factory Model.fromJson(Map<String, dynamic> json) => Model(
         id: json["id"],
@@ -39,6 +46,9 @@ class Model {
         date: json['date'],
         datemade: json['datemade'],
         fileLink: json["file_link"],
+        search: json["search"],
+        from: json["from"],
+        until: json["until"]
     );
 
     Map<String, dynamic> toJson() => {
@@ -51,5 +61,8 @@ class Model {
         "date": date,
         "datemade": datemade,
         "file_link": fileLink,
+        "search": search,
+        "from": from,
+        "until": until
     };
 }

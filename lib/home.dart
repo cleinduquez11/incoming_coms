@@ -14,11 +14,14 @@ import 'package:lottie/lottie.dart';
 import 'package:neomorph/api/delete.dart';
 import 'package:neomorph/api/edit.dart';
 import 'package:neomorph/api/post.dart';
+import 'package:neomorph/api/search.dart';
 import 'package:neomorph/designs/style.dart';
 import 'package:neomorph/loading.dart';
+import 'package:neomorph/search.dart';
 
 import 'api/config.dart';
 import 'api/get.dart';
+import 'from.dart';
 import 'models/Model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:html' as html;
@@ -33,7 +36,8 @@ import 'package:intl/intl.dart';
 final ip = Config.Server;
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  const Home({Key? key,}) : super(key: key);
+  // final String? search;
 
   @override
   State<Home> createState() => _HomeState();
@@ -41,6 +45,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late Future<List<Model>> futureModels = getRecords();
+  late Future<List<Model>> futureModels1 = searchRecord(searchcontroller.text);
    
 
   TextEditingController partcontroller = TextEditingController();
@@ -50,6 +55,10 @@ class _HomeState extends State<Home> {
   TextEditingController remarkscontroller = TextEditingController();
   TextEditingController dateReceivedcontroller = TextEditingController();
   TextEditingController ctlncontroller = TextEditingController();
+  TextEditingController searchcontroller = TextEditingController(text: '');
+  TextEditingController fromcontroller = TextEditingController(text: '');
+  TextEditingController untilcontroller = TextEditingController(text: '');
+
   ScrollController latestController = ScrollController();
 
   bool changeColor = false;
@@ -114,6 +123,9 @@ class _HomeState extends State<Home> {
     datecontroller.dispose();
     statuscontroller.dispose();
     ctlncontroller.dispose();
+    searchcontroller.dispose();
+    fromcontroller.dispose();
+    untilcontroller.dispose();
 
     super.dispose();
   }
@@ -136,6 +148,406 @@ class _HomeState extends State<Home> {
             size: 26,
             ),
             actions: [
+
+                NeumorphicButton(
+                  margin: EdgeInsets.all(12),
+                  onPressed: () {
+                   showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return SizedBox(
+                            child: AlertDialog(
+                              contentPadding: EdgeInsets.all(30),
+                              backgroundColor:
+                                  NeumorphicTheme.baseColor(context),
+                              scrollable: true,
+                              title: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Neumorphic(
+                                  style: NeumorphicStyle(
+                                    disableDepth: true,
+                                    // shape: NeumorphicShape.convex,
+                                    // color: Colors.grey,
+                                    boxShape: NeumorphicBoxShape.roundRect(
+                                        BorderRadius.circular(8)),
+                                  ),
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: TextFormField(
+                                    style: bodyFont(context),
+                                      controller: searchcontroller,
+                                      decoration: InputDecoration(
+                                        enabledBorder: UnderlineInputBorder(      
+                                          borderSide: BorderSide(color: Colors.cyan),   
+                      ),  
+                                        hintText: "search for particulars, agency, control number or status",
+                                        hintStyle: particularsFont(context),
+                                        fillColor: rextColor(context)
+
+                                      ),
+
+                                  )
+                                ),
+                              ),
+                                     actions: [
+                                NeumorphicButton(
+                                    style: NeumorphicStyle(
+                                      shape: NeumorphicShape.flat,
+                                      boxShape: NeumorphicBoxShape.roundRect(
+                                          BorderRadius.circular(8)),
+                                    ),
+                                    padding: const EdgeInsets.all(12.0),
+                                    onPressed: () async {
+                                      if (searchcontroller.text.isEmpty) {
+                                        Navigator.of(context).pop();
+                                        // final snackBar = SnackBar(
+                                        //   backgroundColor: textColor(context),
+                                        //   content: Text(
+                                        //     'Please provide all the requested information',
+                                        //     style: rodyFont(context),
+                                        //   ),
+                                        //   duration: Duration(seconds: 3),
+                                        // );
+
+                                        // // Find the ScaffoldMessenger in the widget tree
+                                        // // and use it to show a SnackBar.
+                                        // ScaffoldMessenger.of(context)
+                                        //     .showSnackBar(snackBar);
+                                      }
+                                      // else if (parts
+                                      //     .contains(partcontroller.text)) {
+                                      //   Navigator.of(context).pop();
+                                      //   const snackBar = SnackBar(
+                                      //     backgroundColor:
+                                      //         Color.fromARGB(255, 210, 48, 36),
+                                      //     content: Text(
+                                      //       "Particular field shouldn't be repeated",
+                                      //       style: TextStyle(
+                                      //         color: Color.fromARGB(
+                                      //             255, 255, 255, 255),
+                                      //         // letterSpacing: 1,
+                                      //         fontSize: 13,
+                                      //         // fontWeight: FontWeight.w800
+                                      //       ),
+                                      //     ),
+                                      //     duration: Duration(seconds: 3),
+                                      //   );
+
+                                      //   // Find the ScaffoldMessenger in the widget tree
+                                      //   // and use it to show a SnackBar.
+                                      //   ScaffoldMessenger.of(context)
+                                      //       .showSnackBar(snackBar);
+                                      // }
+                                      else {
+                                      //  searchRecord(searchcontroller.text);
+                                        // Navigator.pop(context);
+
+                                        await Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        Search(search: searchcontroller.text,)));
+
+                                        //  html.window.location.reload();
+                                        // latestController.animateTo(
+                                        //   latestController
+                                        //       .position.maxScrollExtent,
+                                        //   duration: Duration(milliseconds: 500),
+                                        //   curve: Curves.linear,
+                                        // );
+                                      }
+
+                                      // await  eref.child('Incoming Datas').push().set({
+                                      //     "Particulars": partcontroller.text,
+                                      //     "Agency": agencycontroller.text,
+                                      //     "DateMade": datecontroller.text
+                                      //   });
+
+                                      // html.window.location.reload();
+                                      //  setState(() {
+                                      //    (context as Element).performRebuild();
+                                      //  });
+                                    },
+                                    child: Center(
+                                      child: Text("Search",
+                                          style: bodyFont(context)),
+                                    ))
+                              ],
+                            ),
+                          );
+                        });
+              
+                    //Navigator.pushNamed(context, 'home');
+                  },
+                  style: NeumorphicStyle(
+                    shape: NeumorphicShape.flat,
+                    boxShape:
+                        NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
+                  ),
+                  padding: const EdgeInsets.all(6.0),
+                  child: Icon(Icons.search_rounded,
+                  color: textColor(context),
+                  size: 20,
+                  )
+                  
+                  ),
+
+
+
+              NeumorphicButton(
+                  margin: EdgeInsets.all(12),
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return SizedBox(
+                            child: AlertDialog(
+                              contentPadding: EdgeInsets.all(30),
+                              backgroundColor:
+                                  NeumorphicTheme.baseColor(context),
+                              scrollable: true,
+                              title: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Neumorphic(
+                                  style: NeumorphicStyle(
+                                    disableDepth: true,
+                                    // shape: NeumorphicShape.convex,
+                                    // color: Colors.grey,
+                                    boxShape: NeumorphicBoxShape.roundRect(
+                                        BorderRadius.circular(8)),
+                                  ),
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Text('Filter by date received',
+                                      style: addtitleFont(context)),
+                                ),
+                              ),
+                              content: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Neumorphic(
+                                  style: NeumorphicStyle(
+                                    disableDepth: true,
+                                    color: Colors.grey,
+                                    shape: NeumorphicShape.flat,
+                                    boxShape: NeumorphicBoxShape.roundRect(
+                                        BorderRadius.circular(8)),
+                                  ),
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(30),
+                                    child: SizedBox(
+                                      width: 400,
+                                      child: Column(children: <Widget>[
+                                        // TextFormField(
+                                        //   // controller: emailController,
+                                        //   decoration: InputDecoration(hintText: 'Particulars'),
+                                        // ),
+   
+
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Neumorphic(
+                                            style: NeumorphicStyle(
+                                              shape: NeumorphicShape.flat,
+                                              boxShape:
+                                                  NeumorphicBoxShape.roundRect(
+                                                      BorderRadius.circular(8)),
+                                            ),
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: DateTimeField(
+                                                style: bodyFont(context),
+                                                validator: (date) {
+                                                  if (date! == null) {
+                                                    return ("This field shouldn't be empty");
+                                                  }
+                                                },
+                                                decoration: InputDecoration(
+                                                  label: Text(
+                                                    'From',
+                                                    style: bodyFont(context),
+                                                  ),
+                                                ),
+                                                format: format,
+                                                controller:
+                                                    dateReceivedcontroller,
+                                                onShowPicker:
+                                                    (context, currentValue) {
+                                                  return showDatePicker(
+                                                      context: context,
+                                                      firstDate: DateTime(1900),
+                                                      initialDate:
+                                                          currentValue ??
+                                                              DateTime.now(),
+                                                      lastDate: DateTime(2100));
+                                                }),
+                                          ),
+                                        ),
+
+                                         // TextFormField(
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Neumorphic(
+                                            style: NeumorphicStyle(
+                                              shape: NeumorphicShape.flat,
+                                              boxShape:
+                                                  NeumorphicBoxShape.roundRect(
+                                                      BorderRadius.circular(8)),
+                                            ),
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: DateTimeField(
+                                                style: bodyFont(context),
+                                                validator: (date) {
+                                                  if (date! == null) {
+                                                    return ("This field shouldn't be empty");
+                                                  }
+                                                },
+                                                decoration: InputDecoration(
+                                                  label: Text(
+                                                    'Until',
+                                                    style: bodyFont(context),
+                                                  ),
+                                                ),
+                                                format: format,
+                                                controller: datecontroller,
+                                                onShowPicker:
+                                                    (context, currentValue) {
+                                                  return showDatePicker(
+                                                      context: context,
+                                                      firstDate: DateTime(1900),
+                                                      initialDate:
+                                                          currentValue ??
+                                                              DateTime.now(),
+                                                      lastDate: DateTime(2100));
+                                                }),
+                                          ),
+                                        ),
+
+                                        // Padding(
+                                        //   padding: const EdgeInsets.all(12.0),
+                                        //   child: Center(
+                                        //     child: Neumorphic(
+                                        //       style: NeumorphicStyle(
+                                        //         shape: NeumorphicShape.flat,
+                                        //         boxShape: NeumorphicBoxShape
+                                        //             .roundRect(
+                                        //                 BorderRadius.circular(
+                                        //                     8)),
+                                        //       ),
+                                        //       padding:
+                                        //           const EdgeInsets.all(12.0),
+                                        //       child: IconButton(
+                                        //           icon: Icon(
+                                        //             color: textColor(context),
+                                        //             Icons.upload_file,
+                                        //             size: 30,
+                                        //           ),
+                                        //           onPressed: pickFile),
+                                        //     ),
+                                        //   ),
+                                        // ),
+                                        // selectedFile == null
+                                        //     ? Text(
+                                        //         'Select a File',
+                                        //         style: bodyFont(context),
+                                        //       )
+                                        //     : Text(selectedFile!.name),
+
+                                        //    controller: emailController,
+                                        //   decoration: InputDecoration(hintText: 'Date Made'),
+                                        // ),
+                                      ]),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              actions: [
+                                NeumorphicButton(
+                                    style: NeumorphicStyle(
+                                      shape: NeumorphicShape.flat,
+                                      boxShape: NeumorphicBoxShape.roundRect(
+                                          BorderRadius.circular(8)),
+                                    ),
+                                    padding: const EdgeInsets.all(12.0),
+                                    onPressed: () async {
+                                      if (fromcontroller.text.isEmpty || untilcontroller.text.isEmpty) {
+                                        Navigator.of(context).pop();
+                                      
+                                      }
+                                      // else if (parts
+                                      //     .contains(partcontroller.text)) {
+                                      //   Navigator.of(context).pop();
+                                      //   const snackBar = SnackBar(
+                                      //     backgroundColor:
+                                      //         Color.fromARGB(255, 210, 48, 36),
+                                      //     content: Text(
+                                      //       "Particular field shouldn't be repeated",
+                                      //       style: TextStyle(
+                                      //         color: Color.fromARGB(
+                                      //             255, 255, 255, 255),
+                                      //         // letterSpacing: 1,
+                                      //         fontSize: 13,
+                                      //         // fontWeight: FontWeight.w800
+                                      //       ),
+                                      //     ),
+                                      //     duration: Duration(seconds: 3),
+                                      //   );
+
+                                      //   // Find the ScaffoldMessenger in the widget tree
+                                      //   // and use it to show a SnackBar.
+                                      //   ScaffoldMessenger.of(context)
+                                      //       .showSnackBar(snackBar);
+                                      // }
+                                      else {
+                                        
+                                          print('yeah');
+                                         Navigator.pop(context);
+
+                                        // Navigator.of(context).push(
+                                        //     MaterialPageRoute(
+                                        //         builder:
+                                        //             (BuildContext context) =>
+                                        //                 From(from: fromcontroller.text, until: untilcontroller.text,)));
+
+                                        //  html.window.location.reload();
+                                        // latestController.animateTo(
+                                        //   latestController
+                                        //       .position.maxScrollExtent,
+                                        //   duration: Duration(milliseconds: 500),
+                                        //   curve: Curves.linear,
+                                        // );
+                                      }
+
+                                      // await  eref.child('Incoming Datas').push().set({
+                                      //     "Particulars": partcontroller.text,
+                                      //     "Agency": agencycontroller.text,
+                                      //     "DateMade": datecontroller.text
+                                      //   });
+
+                                      // html.window.location.reload();
+                                      //  setState(() {
+                                      //    (context as Element).performRebuild();
+                                      //  });
+                                    },
+                                    child: Center(
+                                      child: Text("Submit",
+                                          style: addtitleFont(context)),
+                                    ))
+                              ],
+                            ),
+                          );
+                        });
+              
+                    //Navigator.pushNamed(context, 'home');
+                  },
+                  style: NeumorphicStyle(
+                    shape: NeumorphicShape.flat,
+                    boxShape:
+                        NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
+                  ),
+                  padding: const EdgeInsets.all(6.0),
+                  child: Text(
+                    "Filter",
+                    style: bodyFont(context),
+                  )),
+
               NeumorphicButton(
                   margin: EdgeInsets.all(12),
                   onPressed: () {
@@ -518,6 +930,7 @@ class _HomeState extends State<Home> {
                     "Change Theme",
                     style: bodyFont(context),
                   )),
+
             ],
             elevation: 10,
             bottom: TabBar(
@@ -611,7 +1024,7 @@ class _HomeState extends State<Home> {
         extendBodyBehindAppBar: true,
         body: FutureBuilder<List<Model>>(
 
-            future: futureModels,
+            future: getRecords(),
             builder: ((context, snapshot) {
               if (snapshot.hasData) {
                 return ListView.builder(
@@ -749,11 +1162,24 @@ class _HomeState extends State<Home> {
                                                 },
                                                 child: Tooltip(
                                                     message:
-                                                        "Click to Download the file",
-                                                    child: Text(
-                                                        "${snapshot.data![index].particulars}",
-                                                        style: particularsFont(
-                                                            context)))),
+                                                        "Click to Open file",
+                                                    child: Row(
+                                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      children: [
+                                                        
+                                                        Text(
+                                                            "${snapshot.data![index].particulars}",
+                                                            style: particularsFont(
+                                                                context)),
+
+                                                                Icon(Icons.file_download_outlined,
+                                                                size: 20,
+                                                                color: Colors.blue,
+
+                                                                ),
+                                                      ],
+                                                    ))),
                                             // const Text("Particular"),
                                           ],
                                         ),
@@ -1097,7 +1523,7 @@ class _HomeState extends State<Home> {
                                                           maintainState: false,
                                                           builder: (BuildContext
                                                                   context) =>
-                                                              const Home()));
+                                                              Home()));
                                                 },
                                                 icon: const Icon(
                                                   Icons.delete_outline,
