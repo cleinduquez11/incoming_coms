@@ -2,6 +2,7 @@
 
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:neomorph/designs/style.dart';
+import 'package:neomorph/from.dart';
 import 'package:neomorph/home.dart';
 
 
@@ -37,7 +38,8 @@ class MyApp extends StatelessWidget {
       ),
       home: MyHomePage(),
       routes: {
-        'home':(context) => Home()
+        'home':(context) => Home(),
+        'from':(context) => From(from: "08/17/2022", until: "08/18/2022")
       },
     );
   }

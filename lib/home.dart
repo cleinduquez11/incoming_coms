@@ -56,8 +56,8 @@ class _HomeState extends State<Home> {
   TextEditingController dateReceivedcontroller = TextEditingController();
   TextEditingController ctlncontroller = TextEditingController();
   TextEditingController searchcontroller = TextEditingController(text: '');
-  TextEditingController fromcontroller = TextEditingController(text: '');
-  TextEditingController untilcontroller = TextEditingController(text: '');
+  TextEditingController fromcontroller = TextEditingController();
+  TextEditingController untilcontroller = TextEditingController();
 
   ScrollController latestController = ScrollController();
 
@@ -143,6 +143,9 @@ class _HomeState extends State<Home> {
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(150),
           child: AppBar(
+            iconTheme: IconThemeData(
+              color: textColor(context)
+            ) ,
             leading: Icon(Icons.newspaper,
             color: textColor(context),
             size: 26,
@@ -365,9 +368,9 @@ class _HomeState extends State<Home> {
                                                     style: bodyFont(context),
                                                   ),
                                                 ),
-                                                format: format,
+                                                format: format2,
                                                 controller:
-                                                    dateReceivedcontroller,
+                                                    fromcontroller,
                                                 onShowPicker:
                                                     (context, currentValue) {
                                                   return showDatePicker(
@@ -405,8 +408,8 @@ class _HomeState extends State<Home> {
                                                     style: bodyFont(context),
                                                   ),
                                                 ),
-                                                format: format,
-                                                controller: datecontroller,
+                                                format: format2,
+                                                controller: untilcontroller,
                                                 onShowPicker:
                                                     (context, currentValue) {
                                                   return showDatePicker(
@@ -498,13 +501,13 @@ class _HomeState extends State<Home> {
                                       else {
                                         
                                           print('yeah');
-                                         Navigator.pop(context);
+                                       //  Navigator.pop(context);
 
-                                        // Navigator.of(context).push(
-                                        //     MaterialPageRoute(
-                                        //         builder:
-                                        //             (BuildContext context) =>
-                                        //                 From(from: fromcontroller.text, until: untilcontroller.text,)));
+                                         Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                 builder:
+                                                     (BuildContext context) =>
+                                                         From(from: fromcontroller.text, until: untilcontroller.text,)));
 
                                         //  html.window.location.reload();
                                         // latestController.animateTo(
@@ -674,7 +677,7 @@ class _HomeState extends State<Home> {
                                                     style: bodyFont(context),
                                                   ),
                                                 ),
-                                                format: format,
+                                                format: format2,
                                                 controller:
                                                     dateReceivedcontroller,
                                                 onShowPicker:
@@ -741,7 +744,7 @@ class _HomeState extends State<Home> {
                                                     style: bodyFont(context),
                                                   ),
                                                 ),
-                                                format: format,
+                                                format: format2,
                                                 controller: datecontroller,
                                                 onShowPicker:
                                                     (context, currentValue) {
@@ -856,7 +859,7 @@ class _HomeState extends State<Home> {
                                             partcontroller.text,
                                             agencycontroller.text,
                                             datecontroller.text,
-                                            "new",
+                                            "",
                                             "",
                                             ctlncontroller.text,
                                             dateReceivedcontroller.text,
@@ -1162,7 +1165,7 @@ class _HomeState extends State<Home> {
                                                 },
                                                 child: Tooltip(
                                                     message:
-                                                        "Click to Open file",
+                                                        "${snapshot.data![index].fileLink}",
                                                     child: Row(
                                                       crossAxisAlignment: CrossAxisAlignment.center,
                                                       mainAxisAlignment: MainAxisAlignment.center,

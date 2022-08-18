@@ -5,6 +5,7 @@ import 'api/get.dart';
 import 'api/search.dart';
 // import 'api/search_data.dart';
 import 'designs/style.dart';
+import 'home.dart';
 import 'models/Model.dart';
 
 // ignore_for_file: unnecessary_const, prefer_const_constructors
@@ -87,6 +88,14 @@ class _FromState extends State<From> {
       length: 1,
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              maintainState: false,
+              builder: (BuildContext context) => Home()));
+          }, icon: Icon(Icons.arrow_back)),
+          iconTheme: IconThemeData(
+            color: textColor(context)
+          ),
            elevation: 10,
               bottom: TabBar(
                   automaticIndicatorColorAdjustment: false,
@@ -582,7 +591,7 @@ class _FromState extends State<From> {
                                                                                Navigator.of(
                                                                                 context)
                                                                             .pushReplacement(
-                                                                                MaterialPageRoute(builder: (BuildContext context) => Search(search: '',)));
+                                                                                MaterialPageRoute(builder: (BuildContext context) => From(from: widget.from,until: widget.until ,)));
                                                                         }
     
                                                                         // dref
@@ -661,7 +670,7 @@ class _FromState extends State<From> {
                                                             maintainState: false,
                                                             builder: (BuildContext
                                                                     context) =>
-                                                                Search(search: '',)));
+                                                                From(from: widget.from, until: widget.until,)));
                                                   },
                                                   icon: const Icon(
                                                     Icons.delete_outline,

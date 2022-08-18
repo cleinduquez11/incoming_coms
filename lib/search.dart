@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:neomorph/home.dart';
 
 import 'api/get.dart';
 import 'api/search.dart';
@@ -90,6 +91,16 @@ class _SearchState extends State<Search> {
       length: 1,
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(onPressed: (){
+          Navigator.of(context).push(MaterialPageRoute(
+            maintainState: false,
+            builder: (BuildContext context) => Home()));
+          
+          },
+          icon: Icon(Icons.arrow_back)),
+          iconTheme: IconThemeData(
+            color: textColor(context)
+          ),
            elevation: 10,
               bottom: TabBar(
                   automaticIndicatorColorAdjustment: false,
@@ -585,7 +596,7 @@ class _SearchState extends State<Search> {
                                                                                Navigator.of(
                                                                                 context)
                                                                             .pushReplacement(
-                                                                                MaterialPageRoute(builder: (BuildContext context) => Search(search: '',)));
+                                                                                MaterialPageRoute(builder: (BuildContext context) => Search(search:widget.search,)));
                                                                         }
     
                                                                         // dref
@@ -664,7 +675,7 @@ class _SearchState extends State<Search> {
                                                             maintainState: false,
                                                             builder: (BuildContext
                                                                     context) =>
-                                                                Search(search: '',)));
+                                                                Search(search: widget.search)));
                                                   },
                                                   icon: const Icon(
                                                     Icons.delete_outline,
