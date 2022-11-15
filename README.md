@@ -1,16 +1,15 @@
-# neomorph
+# Incoming Communications
 
-A new Flutter project.
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+Prelims: 
+A. Must have a webserver(apache or nginx), for this project. Install Xammp
 
-A few resources to get you started if this is your first Flutter project:
+1.Build the flutter web app by inputting the command flutter build web
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+2. Go to build folder in your project. Look for web folder the copy it to 
+   C://xammp/httdocs/
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+3. Run the mysql and apache on xampp to view the changes
+
+You can now access your website locally by accessing localhost or your deviice local Ip address
